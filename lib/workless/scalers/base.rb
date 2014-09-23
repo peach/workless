@@ -7,7 +7,8 @@ module Delayed
       class Base
         def self.jobs
           if Rails.version >= "3.0.0"
-            Delayed::Job.where("queue != 'default'").where(:failed_at => nil)
+            #Delayed::Job.where("queue != 'default'").where(:failed_at => nil)
+            Delayed::Job.where(:failed_at => nil)
           else
             Delayed::Job.all(:conditions => { :failed_at => nil })
           end
