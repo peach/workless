@@ -13,6 +13,7 @@ module Delayed
               client.post_ps_scale(ENV['APP_NAME'], 'worker', self.workers_needed) 
               @workers = self.workers_needed
             end
+          end
         end
 
         def self.down
