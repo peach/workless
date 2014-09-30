@@ -13,6 +13,7 @@ module Delayed
             if workers_needed_now > self.min_workers and self.workers < workers_needed_now
               client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) 
               @workers = workers_needed_now
+              Rails.cache.write("workless-workers", @workers, expires_in: 15.minutes)
             end
           end
         end
@@ -22,6 +23,7 @@ module Delayed
             client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers)
             @@mutex.sychronize do
               @workers = self.min_workers
+              Rails.cache.write("workless-workers", @workers, expires_in: 15.minutes)
             end
           end
         end
