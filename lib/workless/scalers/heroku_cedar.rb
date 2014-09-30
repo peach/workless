@@ -8,13 +8,13 @@ module Delayed
         @@mutex = Mutex.new
 
         def self.up
-          @@mutex.synchronize do
-            workers_needed_now = self.workers_needed
-            if workers_needed_now > self.min_workers and self.workers < workers_needed_now
-              client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) 
+          workers_needed_now = self.workers_needed
+          if workers_needed_now > self.min_workers and self.workers < workers_needed_now
+            client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) 
+            @@mutex.synchronize do
               @workers = workers_needed_now
-              Rails.cache.write("workless-workers", @workers, expires_in: 15.minutes)
             end
+            Rails.cache.write("workless-workers", @workers, expires_in: 15.minutes)
           end
         end
 
@@ -23,8 +23,8 @@ module Delayed
             client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers)
             @@mutex.synchronize do
               @workers = self.min_workers
-              Rails.cache.write("workless-workers", @workers, expires_in: 15.minutes)
             end
+            Rails.cache.write("workless-workers", @workers, expires_in: 15.minutes)
           end
         end
 
