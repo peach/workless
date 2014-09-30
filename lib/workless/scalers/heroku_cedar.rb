@@ -12,8 +12,7 @@ module Delayed
             workers_needed_now = self.workers_needed
             if workers_needed_now > self.min_workers and self.workers < workers_needed_now
               client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) 
-                @workers = workers_needed_now
-              end
+              @workers = workers_needed_now
             end
           end
         end
