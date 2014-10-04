@@ -30,7 +30,7 @@ module Delayed
 
         def self.workers
           @@mutex.synchronize do
-            return @workers ||= Rails.cache.fetch("workless-workers", :expires_in => 15.minutes, :race_condition_ttl => 10.seconds) do
+            return @workers ||= Rails.cache.fetch("workless-workers", :expires_in => 1.minutes, :race_condition_ttl => 10.seconds) do
               client.get_ps(ENV['APP_NAME']).body.count { |p| p["process"] =~ /worker\.\d?/ }
             end
           end
