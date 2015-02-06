@@ -10,8 +10,9 @@ module Delayed
         def self.up
           workers_needed_now = self.workers_needed
           if workers_needed_now > self.min_workers and self.workers < workers_needed_now
-            p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) }
-            Process.detach(p1)
+            #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) }
+            #Process.detach(p1)
+            client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now)
             @@mutex.synchronize do
               @workers = workers_needed_now
             end
@@ -21,8 +22,9 @@ module Delayed
 
         def self.down
           unless self.jobs.count > 0 or self.workers == self.min_workers
-            p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) }
-            Process.detach(p1)
+            #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) }
+            #Process.detach(p1)
+            client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers)
             @@mutex.synchronize do
               @workers = self.min_workers
             end
