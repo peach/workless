@@ -69,7 +69,7 @@ module Delayed
         end
 
         def self.min_workers
-          ENV['PROCESSES'].split(',').size
+          ENV['PROCESSES'].split(',').each_with_object([]) { |p,a| a << p if p =~ /worker[abc]?$/i }.size
         end
       end
     end
