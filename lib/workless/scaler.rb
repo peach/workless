@@ -4,6 +4,7 @@ module Delayed
 
       autoload :Heroku,      "workless/scalers/heroku"
       autoload :HerokuCedar, "workless/scalers/heroku_cedar"
+      autoload :HerokuCedarHobby, "workless/scalers/heroku_cedar_hobby"
       autoload :Local,       "workless/scalers/local"
       autoload :Null,        "workless/scalers/null"
 
@@ -40,7 +41,11 @@ module Delayed
       module ClassMethods
         def scaler
           @scaler ||= if ENV.include?("HEROKU_API_KEY")
-            Scaler::HerokuCedar
+            if ENV['AUTOSCALER'] == 'heroku_cedar_hobby'
+              Scaler::HerokuCedarHobby
+            else
+              Scaler::HerokuCedar
+            end
           else
             Scaler::Local
           end
