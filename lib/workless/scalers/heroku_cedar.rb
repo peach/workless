@@ -13,7 +13,7 @@ module Delayed
             #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) }
             #Process.detach(p1)
             #client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now)
-            client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => workers_needed_now})
+            client.formation.update(ENV['APP_NAME'], 'worker', {'quantity' => workers_needed_now})
             @@mutex.synchronize do
               @workers = workers_needed_now
             end
@@ -26,7 +26,7 @@ module Delayed
             #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) }
             #Process.detach(p1)
             #client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers)
-            client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => self.min_workers})
+            client.formation.update(ENV['APP_NAME'], 'worker', {'quantity' => self.min_workers})
             @@mutex.synchronize do
               @workers = self.min_workers
             end

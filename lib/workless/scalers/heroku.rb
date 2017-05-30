@@ -10,12 +10,12 @@ module Delayed
 
         def self.up
           #client.put_workers(ENV['APP_NAME'], 1) if self.workers == 0
-          client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => 1}) if self.workers == 0
+          client.formation.update(ENV['APP_NAME'], 'worker', {'quantity' => 1}) if self.workers == 0
         end
 
         def self.down
           #client.put_workers(ENV['APP_NAME'], 0) unless self.jobs.count > 0 or self.workers == 0
-          client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => 0}) unless self.jobs.count > 0 or self.workers == 0
+          client.formation.update(ENV['APP_NAME'], 'worker', {'quantity' => 0}) unless self.jobs.count > 0 or self.workers == 0
         end
 
         def self.workers

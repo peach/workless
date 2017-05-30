@@ -12,10 +12,10 @@ module Delayed
           if workers_needed_now > self.min_workers and self.workers < workers_needed_now
             #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) }
             #Process.detach(p1)
-            client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => 1}) if workers_needed_now > 0
-            client.formation_update(ENV['APP_NAME'], 'workera', {'quantity' => 1}) if workers_needed_now > 1
-            client.formation_update(ENV['APP_NAME'], 'workerb', {'quantity' => 1}) if workers_needed_now > 2
-            client.formation_update(ENV['APP_NAME'], 'workerc', {'quantity' => 1}) if workers_needed_now > 3
+            client.formation.update(ENV['APP_NAME'], 'worker', {'quantity' => 1}) if workers_needed_now > 0
+            client.formation.update(ENV['APP_NAME'], 'workera', {'quantity' => 1}) if workers_needed_now > 1
+            client.formation.update(ENV['APP_NAME'], 'workerb', {'quantity' => 1}) if workers_needed_now > 2
+            client.formation.update(ENV['APP_NAME'], 'workerc', {'quantity' => 1}) if workers_needed_now > 3
             @@mutex.synchronize do
               @workers = workers_needed_now
             end
@@ -27,10 +27,10 @@ module Delayed
           unless self.jobs.count > 0 or self.workers == self.min_workers
             #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) }
             #Process.detach(p1)
-            client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => 0}) if self.min_workers < 1
-            client.formation_update(ENV['APP_NAME'], 'workera', {'quantity' => 0}) if self.min_workers < 2
-            client.formation_update(ENV['APP_NAME'], 'workerb', {'quantity' => 0}) if self.min_workers < 3
-            client.formation_update(ENV['APP_NAME'], 'workerc', {'quantity' => 0}) if self.min_workers < 4
+            client.formation.update(ENV['APP_NAME'], 'worker', {'quantity' => 0}) if self.min_workers < 1
+            client.formation.update(ENV['APP_NAME'], 'workera', {'quantity' => 0}) if self.min_workers < 2
+            client.formation.update(ENV['APP_NAME'], 'workerb', {'quantity' => 0}) if self.min_workers < 3
+            client.formation.update(ENV['APP_NAME'], 'workerc', {'quantity' => 0}) if self.min_workers < 4
             @@mutex.synchronize do
               @workers = self.min_workers
             end
