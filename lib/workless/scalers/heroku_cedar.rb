@@ -1,4 +1,4 @@
-require 'heroku-api'
+require 'platform-api'
 
 module Delayed
   module Workless
@@ -12,7 +12,8 @@ module Delayed
           if workers_needed_now > self.min_workers and self.workers < workers_needed_now
             #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now) }
             #Process.detach(p1)
-            client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now)
+            #client.post_ps_scale(ENV['APP_NAME'], 'worker', workers_needed_now)
+            client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => workers_needed_now})
             @@mutex.synchronize do
               @workers = workers_needed_now
             end
@@ -24,7 +25,8 @@ module Delayed
           unless self.jobs.count > 0 or self.workers == self.min_workers
             #p1 = fork { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) }
             #Process.detach(p1)
-            client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers)
+            #client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers)
+            client.formation_update(ENV['APP_NAME'], 'worker', {'quantity' => self.min_workers})
             @@mutex.synchronize do
               @workers = self.min_workers
             end
@@ -35,7 +37,7 @@ module Delayed
         def self.workers
           @@mutex.synchronize do
             return @workers ||= Rails.cache.fetch("workless-workers", :expires_in => 1.minutes, :race_condition_ttl => 10.seconds) do
-              client.get_ps(ENV['APP_NAME']).body.count { |p| p["process"] =~ /worker\.\d?/ }
+              client.formation.list(ENV['APP_NAME']).each_with_object([]) { |p,a| a << p if p['type'] =~ /worker/i }.map { |p| p['quantity'].to_i }.sum
             end
           end
         end

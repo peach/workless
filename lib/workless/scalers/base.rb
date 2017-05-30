@@ -3,7 +3,7 @@ require 'delayed_job'
 module Delayed
   module Workless
     module Scaler
-  
+
       class Base
         def self.jobs
           if Rails.version >= "3.0.0"
@@ -18,7 +18,8 @@ module Delayed
       module HerokuClient
 
         def client
-          @client ||= ::Heroku::API.new(:api_key => ENV['HEROKU_API_KEY'])
+          #@client ||= ::Heroku::API.new(:api_key => ENV['HEROKU_API_KEY'])
+          @client ||= ::PlatformAPI.connect_oauth(ENV['HEROKU_API_KEY'])
         end
 
       end
